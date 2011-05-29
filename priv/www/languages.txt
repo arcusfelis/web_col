@@ -1,0 +1,107 @@
+Afrikaans
+Alemannisch
+العربية
+Aragonés
+Azərbaycanca
+Bamanankan
+বাংলা
+Bân-lâm-gú
+Беларуская
+‪Беларуская (тарашкевіца)‬
+Boarisch
+Bosanski
+Brezhoneg
+Български
+Català
+Чӑвашла
+Cebuano
+Česky
+Corsu
+Cymraeg
+Dansk
+Deutsch
+Eesti
+Ελληνικά
+Español
+Esperanto
+Euskara
+فارسی
+Føroyskt
+Français
+Furlan
+Gaeilge
+Galego
+Хальмг
+한국어
+Հայերեն
+हिन्दी
+Hrvatski
+Igbo
+Bahasa Indonesia
+Interlingua
+ᐃᓄᒃᑎᑐᑦ/inuktitut
+Italiano
+עברית
+ქართული
+Кыргызча
+Kiswahili
+Latina
+Latviešu
+Lëtzebuergesch
+Lietuvių
+Limburgs
+Magyar
+Македонски
+Malagasy
+മലയാളം
+Malti
+مصرى
+Bahasa Melayu
+Монгол
+Nāhuatl
+Nederlands
+Nedersaksisch
+नेपाली
+日本語
+‪Norsk (bokmål)‬
+‪Norsk (nynorsk)‬
+Nouormand
+Occitan
+Plattdüütsch
+Polski
+Ποντιακά
+Português
+Română
+Runa Simi
+Русиньскый
+Русский
+Sardu
+Shqip
+Sicilianu
+සිංහල
+Simple English
+Slovenčina
+Slovenščina
+Soomaaliga
+Српски / Srpski
+Srpskohrvatski / Српскохрватски
+Basa Sunda
+Suomi
+Svenska
+Tagalog
+தமிழ்
+Татарча/Tatarça
+తెలుగు
+ไทย
+Тоҷикӣ
+Türkçe
+Українська
+Tiếng Việt
+Võro
+文言
+ייִדיש
+Yorùbá
+粵語
+Zazaki
+Žemaitėška
+中文

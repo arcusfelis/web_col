@@ -24,21 +24,8 @@ start(Options) ->
 stop() ->
     mochiweb_http:stop(?MODULE).
 
-get_el(Name, List) when is_list(Name) ->
-    {_Key, Val} = lists:keyfind(Name, 1, List),
-    Val.
-
-get_el_as_string(Name, List) when is_list(Name) ->
-    unicode:characters_to_list(list_to_binary(get_el(Name, List))).
-
-get_el_as_atom(Name, List) when is_list(Name) ->
-    list_to_existing_atom(get_el(Name, List)).
-
-get_el_as_integer(Name, List) when is_list(Name) ->
-    list_to_integer(get_el(Name, List)).
-
 loop(Req, DocRoot) ->
-    Path = Req:get(path),
+    [$/] ++ Path = Req:get(path),
     try
         case Req:get(method) of
             Method when Method =:= 'GET'; Method =:= 'HEAD' ->
@@ -48,15 +35,15 @@ loop(Req, DocRoot) ->
                 end;
             'POST' ->
                 case Path of
-                    "/data" ->
+                    "data" ->
                         PostList = Req:parse_post(),
-                        InStrings = ux_string:explode($\n, get_el_as_string("input", PostList)),
+                        InStrings = ux_string:explode($\n, ux_par:string("input", PostList)),
                         [_|_] = InStrings,
                         
                         OutStrings = ux_col:sort(InStrings, #uca_options {
-                            natural_sort = get_el_as_atom("natural_sort", PostList),
-                            strength = get_el_as_integer("strength", PostList),
-                            alternate = get_el_as_atom("alternate", PostList)
+                            natural_sort = ux_par:atom("natural_sort", PostList),
+                            strength = ux_par:integer("strength", PostList),
+                            alternate = ux_par:atom("alternate", PostList)
                         }),
 
                         Res = string:join(OutStrings, "\n"),

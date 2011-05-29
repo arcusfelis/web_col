@@ -7,9 +7,10 @@
 
 <style> 
 <!--
-    body { font-size: 60%; }
+    .ui-button-text { font-size: 60%; }
     div#input, div#output { width: 50%; float: left; }
-    textarea#string_lists { width: 100%; height: 95%; }
+    div#input div, div#output div { margin: 10px; }
+    div#data_block textarea { width: 100%; height: 600px; } 
 -->
 </style> 
 
@@ -18,11 +19,10 @@
     $(function() {
         function ajaxRefresh() {
             $.ajax({
-              url: "data",
+              url: "/data",
               global: false,
               type: "POST",
               data: ({
-                id : this.getAttribute('id'),
                 alternate : $("input[name=alternate_rd]:checked").attr("id"),
                 strength : $("input[name=strength_rd]:checked").val(),
                 natural_sort : $("input#natural_sort_chk").attr("checked"),
@@ -31,10 +31,31 @@
               dataType: "html",
               async:false,
               success: function(msg){
-                $("#output")[0].innerText = msg;
+                $("#output textarea")[0].innerText = msg;
               }
            });
         }
+
+        function ajaxData(addr) {
+            $.ajax({
+              url: "/" + addr + ".txt",
+              global: false,
+              type: "GET",
+              dataType: "plain",
+              async:false,
+              success: function(msg){
+                $("#input textarea")[0].value = msg;
+                ajaxRefresh();
+              }
+           });
+        }
+        ajaxData("dave_koelle");
+
+        $(".loader_btn").click(function() {
+            ajaxData(this.value);
+        }).button();
+        $("#loader_block").buttonset();
+        
 
         $("#natural_sort_chk").button();
         $("#alternate_radioset").buttonset();
@@ -45,34 +66,68 @@
             },
             text: false
         });
-        $("#toolbar input, #toolbar button").click(ajaxRefresh);
+        $("#toolbar .u input, #toolbar button.u").click(ajaxRefresh);
         
+        var toolbar_height = $("#toolbar").height();
+        function resizeHack() {
+            if ($(window).height() > $('body').innerHeight())
+            {
+                $('textarea').height(
+                    $(window).height() - toolbar_height - 30
+                );
+            }
+        }
+        resizeHack();
+        $(window).resize(resizeHack);
     });
 -->
 </script>
 </head>
 <body>
 <div id="toolbar" class="ui-widget-header ui-corner-all">
-    <button id="refresh_btn">Reload data</button>
-    <span id="alternate_radioset">
+    <button id="refresh_btn" class="u">Reload data</button>
+    <span id="loader_block">
+        <button class="loader_btn" value="dave_koelle" title="By Dave Koelle">Numbers</button>
+        <button class="loader_btn" value="cities" title="From wikipedia.org">Cities</button>
+        <button class="loader_btn" value="languages" title="From wikipedia.org">Languages</button>
+    </span>
+    <span id="alternate_radioset" class="u">
         <input type="radio" id="non_ignorable" 
             name="alternate_rd" /><label for="non_ignorable">Non-ignorable</label>
         <input type="radio" id="blanked" 
             name="alternate_rd" /><label for="blanked">Blanked</label>
         <input type="radio" id="shifted" 
-            name="alternate_rd" checked="checked" /><label for="shifted">Shifted</label>
+            name="alternate_rd" checked="checked" />
+        <label for="shifted">Shifted</label>
         <input type="radio" id="shift_trimmed" 
             name="alternate_rd" /><label for="shift_trimmed">Shift-trimmed</label>
     </span>
-    <span id="strength_radioset">
-        <input type="radio" id="l1" name="strength_rd" value="1" /><label for="l1">L1</label>
-        <input type="radio" id="l2" name="strength_rd" value="2" /><label for="l2">L2</label>
-        <input type="radio" id="l3" name="strength_rd" value="3" checked="checked" /><label for="l3">L3</label>
-        <input type="radio" id="l4" name="strength_rd" value="4" /><label for="l4">L4</label>
+    <span id="strength_radioset" class="u">
+        <input type="radio" id="l1" name="strength_rd" value="1" />
+        <label for="l1">L1</label>
+        <input type="radio" id="l2" name="strength_rd" value="2" />
+        <label for="l2">L2</label>
+        <input type="radio" id="l3" name="strength_rd" value="3" checked="checked" />
+        <label for="l3">L3</label>
+        <input type="radio" id="l4" name="strength_rd" value="4" />
+        <label for="l4">L4</label>
     </span>
-    <input type="checkbox" name="natural_sort_chk" id="natural_sort_chk" /><label for="natural_sort_chk">Natural</label>
+    <span class="u">
+        <input type="checkbox" name="natural_sort_chk" id="natural_sort_chk" />
+        <label for="natural_sort_chk">Natural</label>
+    </span>
 </div>
-<div id="input"><textarea id="string_lists"></textarea></div>
-<div id="output"></div>
+<div id="data_block">
+    <div id="input">
+        <div>
+            <textarea id="string_lists"></textarea>
+        </div>
+    </div>
+    <div id="output">
+        <div>
+            <textarea></textarea>
+        </div>
+    </div>
+</div>
 </body>
 </html>
