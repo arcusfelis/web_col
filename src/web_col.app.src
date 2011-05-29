@@ -1,0 +1,9 @@
+%% -*- erlang -*-
+{application, web_col,
+ [{description, "web_col"},
+  {vsn, "0.1"},
+  {modules, []},
+  {registered, []},
+  {mod, {'web_col_app', []}},
+  {env, []},
+  {applications, [kernel, stdlib, crypto]}]}.

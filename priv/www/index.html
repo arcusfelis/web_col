@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>Web Based Collation Tool</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
+<link rel="stylesheet" class="theme-link" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/base/jquery-ui.css" type="text/css" media="screen" /> 
+
+<style> 
+<!--
+    body { font-size: 60%; }
+    div#input, div#output { width: 50%; float: left; }
+    textarea#string_lists { width: 100%; height: 95%; }
+-->
+</style> 
+
+<script type="text/javascript">
+<!--
+    $(function() {
+        function ajaxRefresh() {
+            $.ajax({
+              url: "data",
+              global: false,
+              type: "POST",
+              data: ({
+                id : this.getAttribute('id'),
+                alternate : $("input[name=alternate_rd]:checked").attr("id"),
+                strength : $("input[name=strength_rd]:checked").val(),
+                natural_sort : $("input#natural_sort_chk").attr("checked"),
+                input : $("textarea#string_lists").val()
+              }),
+              dataType: "html",
+              async:false,
+              success: function(msg){
+                $("#output")[0].innerText = msg;
+              }
+           });
+        }
+
+        $("#natural_sort_chk").button();
+        $("#alternate_radioset").buttonset();
+        $("#strength_radioset").buttonset();
+        $("#refresh_btn").button({
+            icons: {
+                primary: "ui-icon-refresh"
+            },
+            text: false
+        });
+        $("#toolbar input, #toolbar button").click(ajaxRefresh);
+        
+    });
+-->
+</script>
+</head>
+<body>
+<div id="toolbar" class="ui-widget-header ui-corner-all">
+    <button id="refresh_btn">Reload data</button>
+    <span id="alternate_radioset">
+        <input type="radio" id="non_ignorable" 
+            name="alternate_rd" /><label for="non_ignorable">Non-ignorable</label>
+        <input type="radio" id="blanked" 
+            name="alternate_rd" /><label for="blanked">Blanked</label>
+        <input type="radio" id="shifted" 
+            name="alternate_rd" checked="checked" /><label for="shifted">Shifted</label>
+        <input type="radio" id="shift_trimmed" 
+            name="alternate_rd" /><label for="shift_trimmed">Shift-trimmed</label>
+    </span>
+    <span id="strength_radioset">
+        <input type="radio" id="l1" name="strength_rd" value="1" /><label for="l1">L1</label>
+        <input type="radio" id="l2" name="strength_rd" value="2" /><label for="l2">L2</label>
+        <input type="radio" id="l3" name="strength_rd" value="3" checked="checked" /><label for="l3">L3</label>
+        <input type="radio" id="l4" name="strength_rd" value="4" /><label for="l4">L4</label>
+    </span>
+    <input type="checkbox" name="natural_sort_chk" id="natural_sort_chk" /><label for="natural_sort_chk">Natural</label>
+</div>
+<div id="input"><textarea id="string_lists"></textarea></div>
+<div id="output"></div>
+</body>
+</html>
