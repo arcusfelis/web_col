@@ -5,7 +5,6 @@
 
 -module(web_col_web).
 -author("Mochi Media <dev@mochimedia.com>").
--include("../deps/ux/src/ux_col.hrl").
 
 -export([start/1, stop/0, loop/2]).
 
@@ -36,19 +35,9 @@ loop(Req, DocRoot) ->
             'POST' ->
                 case Path of
                     "data" ->
-                        PostList = Req:parse_post(),
-                        InStrings = ux_string:explode($\n, ux_par:string("input", PostList)),
-                        [_|_] = InStrings,
-                        
-                        OutStrings = ux_col:sort(InStrings, #uca_options {
-                            natural_sort = ux_par:atom("natural_sort", PostList),
-                            strength = ux_par:integer("strength", PostList),
-                            alternate = ux_par:atom("alternate", PostList)
-                        }),
-
-                        Res = string:join(OutStrings, "\n"),
-
-                        Req:ok({"text/html", unicode:characters_to_binary(Res)});
+                        col_data(Req);
+                    "key" ->
+                        col_key(Req);
                     _ ->
                         Req:not_found()
                 end;
@@ -67,6 +56,39 @@ loop(Req, DocRoot) ->
                          "request failed, sorry\n"})
     end.
 
+%% Return sorted data as plain text.
+col_data(Req) ->
+    PostList = Req:parse_post(),
+    InStrings = ux_string:explode($\n, ux_par:string("input", PostList)),
+    [_|_] = InStrings,
+    
+    OutStrings = ux_col:sort(InStrings, col_params(PostList)),
+
+    Res = string:join(OutStrings, "\n"),
+    Req:ok({"text/plain", unicode:characters_to_binary(Res)}).
+
+%% Return sort key.
+col_key(Req) ->
+    PostList = Req:parse_post(),
+    InStrings = ux_string:explode($\n, ux_par:string("input", PostList)),
+    [_|_] = InStrings,
+    
+    Params = col_params(PostList),
+    OutStrings = [
+        lists:flatten(
+            io_lib:format("~w", 
+                [ux_col:sort_key(Str, Params)])) || Str <- InStrings],
+    Res = string:join(OutStrings, "\n"),
+    Req:ok({"text/plain", list_to_binary(Res)}).
+
+%% Extract params from a POST data list.
+col_params(PostList) ->
+    ux_col:get_options([
+        {natural_sort, ux_par:atom("natural_sort", PostList)},
+        {strength, ux_par:integer("strength", PostList)},
+        {alternate, ux_par:atom("alternate", PostList)}
+    ]).
+
 %% Internal API
 
 get_option(Option, Options) ->
@@ -77,11 +99,5 @@ get_option(Option, Options) ->
 %%
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
-
-you_should_write_a_test() ->
-    ?assertEqual(
-       "No, but I will!",
-       "Have you written any tests?"),
-    ok.
 
 -endif.
