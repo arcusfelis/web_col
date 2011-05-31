@@ -1,0 +1,9 @@
+{application,web_col,
+             [{description,"web_col"},
+              {vsn,"0.1"},
+              {modules,[web_col,web_col_app,web_col_deps,web_col_sup,
+                        web_col_web]},
+              {registered,[]},
+              {mod,{web_col_app,[]}},
+              {env,[]},
+              {applications,[kernel,stdlib,crypto]}]}.
