@@ -11,7 +11,7 @@
 
 <style> 
 <!--
-    body { overflow: hidden; } /* no scrollbars */
+    body, #dialog_sortkey_error { overflow: hidden; } /* no scrollbars */
     .ui-button-text { font-size: 60%; }
     div#input, div#output { width: 50%; float: left; }
     div#input div, div#output div { margin: 10px; }
@@ -187,7 +187,20 @@
             text: false
         }).click(function() {
             var sel = sel_obj.getSelection().text;
-            ajaxSortKey(sel);
+            if (sel.length) {
+                ajaxSortKey(sel);
+            } else {
+                $("#dialog_sortkey_error").dialog({
+                    resizable: false,
+                    height:200,
+                    modal: true,
+                    buttons: {
+                        "OK": function() {
+                            $(this).dialog( "close" );
+                        } 
+                    }
+                });
+            }
         });
     });
 -->
@@ -255,9 +268,13 @@ Languages.</textarea>
         </p>
     </div>
     <div id="dialog_key" title="String information">
-        <p>
+        <p></p>
+    </div>
+    <div id="dialog_sortkey_error" title="Error">
+        <p>Select text and try again.
         </p>
     </div>
+
 </div>
 </body>
 </html>
