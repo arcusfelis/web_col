@@ -11,7 +11,7 @@
 
 <style> 
 <!--
-    body { text-align: center; }
+    body { overflow: hidden; } /* no scrollbars */
     .ui-button-text { font-size: 60%; }
     div#input, div#output { width: 50%; float: left; }
     div#input div, div#output div { margin: 10px; }
@@ -19,9 +19,18 @@
     #select_css { text-align: center; margin: 0 auto; }
     #select_css ul { margin-left: auto; margin-right: auto;
         width: 12em; text-align: left; }
-    #select_css li { float: left; margin: 5px; }
-    #select_css li a { font-size: 10pt; text-decoration: none; }
     #hide_me { visibility: hidden; position: absolute; }
+    #dialog p { text-align: center; }
+    #dialog_key .in_str { font-size: 12px; }
+    #dialog_key .out_str { font-size: 10px; margin-bottom: 5px; }
+    #dialog_key {
+        white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+        white-space: -pre-wrap; /* Opera 4 - 6 */
+        white-space: -o-pre-wrap; /* Opera 7 */
+        white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+        word-wrap: break-word; /* IE 5.5+ */
+    }
+    #dialog_key p { margin-top: -40px; }
 -->
 </style> 
 
@@ -49,7 +58,7 @@
               dataType: "html",
               async:false,
               success: function(msg){
-                $("#output textarea")[0].innerText = msg;
+                $("#output textarea")[0].value = msg;
               }
            });
         }
@@ -109,7 +118,6 @@
             id = id % css_names.length;
             $.cookie("css", id, {expires: 365, path: '/'});
             var path = themePath + css_names[id] + "/jquery-ui.css";
-            console.dir(path);
             $("link").attr("href", path);
             sel_css_btn.val(css_comments[id]);
             sel_css_btn.children().text(css_comments[id]);
@@ -138,26 +146,31 @@
 
 
         var key_dialog = $("#dialog_key");
-        var key_dialog_text = $("#dialog_key p")[0];
-        function setKeyMess(msg) {
-            key_dialog_text.innerText = msg; 
-            key_dialog.dialog({
-                height: 300,
-                width: 800,
-                modal: true
-            });
-        }
+        var key_dialog_text = $("#dialog_key p");
 // Return info.
-        function ajaxSortKey(Str) {
+        function ajaxSortKey(str) {
             $.ajax({
               url: "/key",
               global: false,
               type: "POST",
-              data: getParams(Str),
+              data: getParams(str),
               dataType: "html",
               async:false,
               success: function(msg) {
-                setKeyMess(Str + "\n" + msg);
+                var strArr = $.grep(str.split("\n"), function(v,i) {return v!="";});
+                var msgArr = $.grep(msg.split("\n"), function(v,i) {return v!="";});
+                var out = key_dialog_text.empty();
+                for (var i = 0; i < strArr.length; i++) {
+                    if (strArr[i].length > 0) {
+                        $("<div class='in_str'></div>").text(strArr[i]).appendTo(out);
+                        $("<div class='out_str'></div>").text(msgArr[i]).appendTo(out);
+                    }
+                }
+                key_dialog.dialog({
+                    height: 300,
+                    width: 800,
+                    modal: true
+                });
               }
            });
         }
@@ -202,19 +215,19 @@
     </span>
     <span id="strength_radioset" class="u">
         <input type="radio" id="l1" name="strength_rd" value="1" />
-        <label for="l1">L1</label>
+        <label for="l1" title="Base characters">L1</label>
         <input type="radio" id="l2" name="strength_rd" value="2" />
-        <label for="l2">L2</label>
+        <label for="l2" title="Accents">L2</label>
         <input type="radio" id="l3" name="strength_rd" value="3" checked="checked" />
-        <label for="l3">L3</label>
+        <label for="l3" title="Case">L3</label>
         <input type="radio" id="l4" name="strength_rd" value="4" />
-        <label for="l4">L4</label>
+        <label for="l4" title="Punctuation">L4</label>
     </span>
     <span class="u">
         <input type="checkbox" name="natural_sort_chk" id="natural_sort_chk" />
         <label for="natural_sort_chk" title="Natural sort for numbers (i.e. 2<10)">Natural</label>
     </span>
-    <button id="select_css_btn" title="Theme">Default</button>
+    <button id="select_css_btn" title="Press to changhe theme">Default</button>
     <button id="info_btn" title="About program">Info</button>
 </div>
 <div id="data_block">
