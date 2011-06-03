@@ -1,208 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 <title>Web Based Collation Tool</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
 <script src="https://github.com/carhartl/jquery-cookie/raw/master/jquery.cookie.js"></script>
 <script src="https://github.com/localhost/jquery-fieldselection/raw/master/jquery-fieldselection.min.js"></script>
+<link rel="stylesheet"
+    href="https://github.com/jasonkarns/css-reset/raw/master/reset.css" 
+    type="text/css" media="screen" /> 
 <link rel="stylesheet" class="theme-link" 
     href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/base/jquery-ui.css" 
     type="text/css" media="screen" /> 
 
-<style> 
+<style type="text/css"> 
 <!--
     body, #dialog_sortkey_error { overflow: hidden; } /* no scrollbars */
-    .ui-button-text { font-size: 60%; }
+    .ui-button-text { font-size: 12px; }
     div#input, div#output { width: 50%; float: left; }
     div#input div, div#output div { margin: 10px; }
+    div#output { display: none; }
     div#data_block textarea { width: 100%; height: 600px; } 
-    #select_css { text-align: center; margin: 0 auto; }
-    #select_css ul { margin-left: auto; margin-right: auto;
-        width: 12em; text-align: left; }
     #hide_me { visibility: hidden; position: absolute; }
     #dialog p { text-align: center; }
+    #dialog_key, #dialog_key p { padding-top: 0px; }
+    #dialog_key p { margin: 0px; }
     #dialog_key .in_str { font-size: 12px; }
     #dialog_key .out_str { font-size: 10px; margin-bottom: 5px; }
     #dialog_key {
         white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
         white-space: -pre-wrap; /* Opera 4 - 6 */
         white-space: -o-pre-wrap; /* Opera 7 */
-        white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+        white-space: pre-wrap; /* 
+            CSS3 - Text module (Candidate Recommendation) 
+            http://www.w3.org/TR/css3-text/#white-space */
         word-wrap: break-word; /* IE 5.5+ */
     }
-    #dialog_key p { margin-top: -40px; }
+    #select_css_btn { display: none; }
+    /*#dialog_key p { margin-top: -40px; }*/
 -->
 </style> 
 
 <script type="text/javascript">
 <!--
-    $(function() {
-        var themePath = "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/";
+$.bVal = function(obj) {
+if ($.browser.msie) {
+    $obj = $(obj);
+    obj.disable = "disable";
+    // Get the text label of the button
+    var label = $obj.text(); 
+    // Set it to an empty string so IE will read the real value attribute
+    $obj.text('');
+    var val = obj.value;    
+    // Restore the button's text label
+    $obj.text(label);
+    this.disable = "";
+    return val;
+} else {
+    return obj.value;
+}
+}
 
-        function getParams(str) {
-            var obj = {
-                alternate : $("input[name=alternate_rd]:checked").attr("id"),
-                strength : $("input[name=strength_rd]:checked").val(),
-                natural_sort : $("input#natural_sort_chk").attr("checked"),
-                input : str
-              };
-            return obj;
-        }
+$(function() {
+var themePath = "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/";
+
+// Extract sorting parameters.
+function getParams(str) {
+    var obj = {
+        alternate : $("input[name=alternate_rd]:checked").attr("id"),
+        strength : $("input[name=strength_rd]:checked").val(),
+        natural_sort : $("input#natural_sort_chk").attr("checked"),
+        input : str
+      };
+    return obj;
+}
 // Send data to server.
-        function ajaxRefresh() {
-            $.ajax({
-              url: "/data",
-              global: false,
-              type: "POST",
-              data: getParams($("textarea#string_lists").val()),
-              dataType: "html",
-              async:false,
-              success: function(msg){
-                $("#output textarea")[0].value = msg;
-              }
-           });
-        }
+function ajaxRefresh() {
+    $.ajax({
+      url: "/data",
+      type: "POST",
+      data: getParams($("textarea#string_lists").val()),
+      dataType: "plain",
+      success: function(msg){
+        $("#output textarea")[0].value = msg;
+        $("#output").show();
+      }
+   });
+}
 
 // Load input data from file from server.
-        function ajaxData(addr) {
-            $.ajax({
-              url: "/" + addr + ".txt",
-              global: false,
-              type: "GET",
-              dataType: "plain",
-              async:false,
-              success: function(msg){
-                $("#input textarea")[0].value = msg;
-                ajaxRefresh();
-              }
-           });
-        }
-//        ajaxData("dave_koelle");
+function ajaxData(addr) {
+    $.ajax({
+      url: "/" + addr + ".txt",
+      type: "GET",
+      dataType: "plain",
+      success: function(msg){
+        $("#input textarea")[0].value = msg;
+        ajaxRefresh();
+      }
+   });
+}
 
-        $(".loader_btn").click(function() {
-            ajaxData(this.value);
-        }).button();
-        $("#loader_block").buttonset();
-        
+$(".loader_btn button").click(function() {
+    ajaxData($.bVal(this));
+}).button();
+$("#loader_block").buttonset();
 
-        $("#natural_sort_chk").button();
-        $("#alternate_radioset").buttonset();
-        $("#strength_radioset").buttonset();
-        $("#refresh_btn").button({
-            icons: {
-                primary: "ui-icon-refresh"
-            },
-            text: false
-        });
-        $("#toolbar .u input, #toolbar button.u").click(ajaxRefresh);
-        
+
+$("#natural_sort_chk").button();
+$("#alternate_radioset").buttonset();
+$("#strength_radioset").buttonset();
+$("#refresh_btn").button({
+    icons: {
+        primary: "ui-icon-refresh"
+    },
+    text: false
+});
+$("#toolbar .u input, #toolbar button.u").click(ajaxRefresh);
+
 // Resizer for textarea.
-        var toolbar_height = $("#toolbar").height();
-        function resizeHack() {
-            if ($(window).height() > $('body').innerHeight())
-            {
-                $('textarea').height(
-                    $(window).height() - toolbar_height - 30
-                );
-            }
-        }
-        resizeHack();
-        $(window).resize(resizeHack);
+var toolbar_height = $("#toolbar").height();
+function resizeHack() {
+    if ($(window).height() > $('body').innerHeight())
+    {
+        $('textarea').height(
+            $(window).height() - toolbar_height - 30
+        );
+    }
+}
+resizeHack();
+$(window).resize(resizeHack);
 
+if ($.cookie) {
 // Change CSS.
-        var sel_css_btn = $("#select_css_btn").button();
-        var cssId = $.cookie("css");
-        var css_names = ["base", "redmond", "flick"];
-        var css_comments = ["Default", "Redmond", "Flick"];
-        function setCss(id) {
-            id = id % css_names.length;
-            $.cookie("css", id, {expires: 365, path: '/'});
-            var path = themePath + css_names[id] + "/jquery-ui.css";
-            $("link").attr("href", path);
-            sel_css_btn.val(css_comments[id]);
-            sel_css_btn.children().text(css_comments[id]);
+var sel_css_btn = $("#select_css_btn").show().button();
+var cssId = $.cookie("css");
+var css_names = ["base", "redmond", "flick"];
+var css_comments = ["Default", "Redmond", "Flick"];
+function setCss(id) {
+    id = id % css_names.length;
+    $.cookie("css", id, {expires: 365, path: '/'});
+    var path = themePath + css_names[id] + "/jquery-ui.css";
+    $("link").attr("href", path);
+    sel_css_btn.val(css_comments[id]);
+    sel_css_btn.children().text(css_comments[id]);
+}
+
+if (cssId) {
+    setCss(parseInt(cssId));
+} else {
+    cssId = 0;
+}
+sel_css_btn.click(function() { 
+    setCss(++cssId);
+});
+}
+
+
+// Show the copyright window.
+$("#info_btn").button({
+    icons: {
+        primary: "ui-icon-info"
+    },
+    text: false
+}).click(function() {
+    $("#dialog").dialog({
+        modal: true
+    });
+});
+
+
+var key_dialog = $("#dialog_key");
+var key_dialog_text = $("#dialog_key p");
+// Return information about a string.
+function ajaxSortKey(str) {
+    $.ajax({
+      url: "/key",
+      global: false,
+      type: "POST",
+      data: getParams(str),
+      dataType: "html",
+      async:false,
+      success: function(msg) {
+        var strArr = $.grep(str.split("\n"), function(v,i) {return v!="";});
+        var msgArr = $.grep(msg.split("\n"), function(v,i) {return v!="";});
+        var out = key_dialog_text.empty();
+        for (var i = 0; i < strArr.length; i++) {
+            if (strArr[i].length > 0) {
+                $("<div class='in_str'></div>").text(strArr[i]).appendTo(out);
+                $("<div class='out_str'></div>").text(msgArr[i]).appendTo(out);
+            }
         }
-
-        if (cssId) {
-            setCss(parseInt(cssId));
-        } else {
-            cssId = 0;
-        }
-        sel_css_btn.click(function() { 
-            setCss(++cssId);
+        key_dialog.dialog({
+            height: 300,
+            width: 800,
+            modal: true
         });
+      }
+   });
+}
 
-// Copyright.
-        $("#info_btn").button({
-            icons: {
-                primary: "ui-icon-info"
-            },
-            text: false
-        }).click(function() {
-            $("#dialog").dialog({
-                modal: true
-            });
-        });
-
-
-        var key_dialog = $("#dialog_key");
-        var key_dialog_text = $("#dialog_key p");
-// Return info.
-        function ajaxSortKey(str) {
-            $.ajax({
-              url: "/key",
-              global: false,
-              type: "POST",
-              data: getParams(str),
-              dataType: "html",
-              async:false,
-              success: function(msg) {
-                var strArr = $.grep(str.split("\n"), function(v,i) {return v!="";});
-                var msgArr = $.grep(msg.split("\n"), function(v,i) {return v!="";});
-                var out = key_dialog_text.empty();
-                for (var i = 0; i < strArr.length; i++) {
-                    if (strArr[i].length > 0) {
-                        $("<div class='in_str'></div>").text(strArr[i]).appendTo(out);
-                        $("<div class='out_str'></div>").text(msgArr[i]).appendTo(out);
-                    }
-                }
-                key_dialog.dialog({
-                    height: 300,
-                    width: 800,
-                    modal: true
-                });
-              }
-           });
-        }
-
-// Get sort key.
-        var sel_obj = $("#input textarea");
-        $("#input textarea, #output textarea").focus(function() {
-            sel_obj = $(this);
-        });
-        $("#key_btn").button({
-            icons: {
-                primary: "ui-icon-key"
-            },
-            text: false
-        }).click(function() {
-            var sel = sel_obj.getSelection().text;
-            if (sel.length) {
-                ajaxSortKey(sel);
-            } else {
-                $("#dialog_sortkey_error").dialog({
-                    resizable: false,
-                    height:200,
-                    modal: true,
-                    buttons: {
-                        "OK": function() {
-                            $(this).dialog( "close" );
-                        } 
-                    }
-                });
+// Get selected text and run ajaxSortKey/1.
+var sel_obj = $("#input textarea");
+$("#input textarea, #output textarea").focus(function() {
+    sel_obj = $(this);
+});
+$("#key_btn").button({
+    icons: {
+        primary: "ui-icon-key"
+    },
+    text: false
+}).click(function() {
+    var sel = sel_obj.getSelection().text;
+    if (sel.length) {
+        ajaxSortKey(sel);
+    } else {
+        $("#dialog_sortkey_error").dialog({
+            resizable: false,
+            height:200,
+            modal: true,
+            buttons: {
+                "OK": function() {
+                    $(this).dialog( "close" );
+                } 
             }
         });
-    });
+    }
+});
+});
 -->
 </script>
 </head>
@@ -210,35 +236,39 @@
 <div id="toolbar" class="ui-widget-header ui-corner-all">
     <button id="refresh_btn" class="u">Reload data</button>
     <button id="key_btn">Get sort key</button>
-    <span id="loader_block">
-        <button class="loader_btn" value="dave_koelle" title="By Dave Koelle">Numbers</button>
-        <button class="loader_btn" value="cities" title="From wikipedia.org">Cities</button>
-        <button class="loader_btn" value="languages" title="From wikipedia.org">Languages</button>
+    <span id="loader_block" class="loader_btn">
+        <button value="dave_koelle" 
+            title="By Dave Koelle">Numbers</button>
+        <button value="cities" 
+            title="From wikipedia.org">Cities</button>
+        <button value="languages" 
+            title="From wikipedia.org">Languages</button>
     </span>
     <span id="alternate_radioset" class="u">
-        <input type="radio" id="non_ignorable" 
-            name="alternate_rd" /><label for="non_ignorable">Non-ignorable</label>
-        <input type="radio" id="blanked" 
-            name="alternate_rd" /><label for="blanked">Blanked</label>
-        <input type="radio" id="shifted" 
-            name="alternate_rd" checked="checked" />
-        <label for="shifted">Shifted</label>
-        <input type="radio" id="shift_trimmed" 
-            name="alternate_rd" /><label for="shift_trimmed">Shift-trimmed</label>
+        <input type="radio" id="non_ignorable" name="alternate_rd" />
+        <label for="non_ignorable">Non-ignorable</label>
+        <input type="radio" id="blanked" name="alternate_rd" />
+        <label for="blanked">Blanked</label>
+        <input type="radio" id="shifted" name="alternate_rd" 
+            checked="checked" /><label for="shifted">Shifted</label>
+        <input type="radio" id="shift_trimmed" name="alternate_rd" />
+        <label for="shift_trimmed">Shift-trimmed</label>
     </span>
     <span id="strength_radioset" class="u">
         <input type="radio" id="l1" name="strength_rd" value="1" />
         <label for="l1" title="Base characters">L1</label>
         <input type="radio" id="l2" name="strength_rd" value="2" />
         <label for="l2" title="Accents">L2</label>
-        <input type="radio" id="l3" name="strength_rd" value="3" checked="checked" />
+        <input type="radio" id="l3" name="strength_rd" value="3" 
+            checked="checked" />
         <label for="l3" title="Case">L3</label>
         <input type="radio" id="l4" name="strength_rd" value="4" />
         <label for="l4" title="Punctuation">L4</label>
     </span>
     <span class="u">
         <input type="checkbox" name="natural_sort_chk" id="natural_sort_chk" />
-        <label for="natural_sort_chk" title="Natural sort for numbers (i.e. 2<10)">Natural</label>
+        <label for="natural_sort_chk" 
+            title="Natural sort for numbers (i.e. 2<10)">Natural</label>
     </span>
     <button id="select_css_btn" title="Press to changhe theme">Default</button>
     <button id="info_btn" title="About program">Info</button>
@@ -264,7 +294,8 @@ Languages.</textarea>
         <p>
             Web col, LGPL<br />
             Uvarov Michael, 2011<br /> freeakk@gmail.com <br /> &nbsp; <br />
-            <a href="https://github.com/freeakk/web_col" target="blank">Home page</a>
+            <a href="https://github.com/freeakk/web_col" 
+                target="blank">Home page</a>
         </p>
     </div>
     <div id="dialog_key" title="String information">

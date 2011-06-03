@@ -1,10 +1,11 @@
-%% @author Mochi Media <dev@mochimedia.com>
-%% @copyright 2010 Mochi Media <dev@mochimedia.com>
+%% @author Uvarov Michael <freeakk@gmail.com>
+%% @copyright 2011 Uvarov Michael <freeakk@gmail.com>
 
 %% @doc Web server for web_col.
 
 -module(web_col_web).
 -author("Mochi Media <dev@mochimedia.com>").
+-author("Uvarov Michael <freeakk@gmail.com>").
 
 -export([start/1, stop/0, loop/2]).
 
