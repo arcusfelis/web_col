@@ -3,6 +3,7 @@
 <head>
 <title>Web Based Collation Tool</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+<!--
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
 <script src="https://github.com/carhartl/jquery-cookie/raw/master/jquery.cookie.js"></script>
@@ -12,6 +13,20 @@
     type="text/css" media="screen" /> 
 <link rel="stylesheet" class="theme-link" 
     href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/base/jquery-ui.css" 
+    type="text/css" media="screen" /> 
+-->
+<script src="lib/jquery-ui/jquery-1.5.1.js"></script>
+<script src="lib/jquery-ui/ui/jquery.ui.core.js"></script>
+<script src="lib/jquery-ui/ui/jquery.ui.widget.js"></script>
+<script src="lib/jquery-ui/ui/jquery.ui.dialog.js"></script>
+<script src="lib/jquery-ui/ui/jquery.ui.button.js"></script>
+<script src="lib/jquery-cookie/jquery.cookie.js"></script>
+<script src="lib/jquery-fieldselection/jquery-fieldselection.min.js"></script>
+<link rel="stylesheet"
+    href="lib/css-reset/reset.css" 
+    type="text/css" media="screen" /> 
+<link rel="stylesheet" class="theme-link" 
+    href="lib/jquery-ui/themes/base/jquery.ui.all.css" 
     type="text/css" media="screen" /> 
 
 <style type="text/css"> 
@@ -83,9 +98,8 @@ function ajaxRefresh() {
       url: "/data",
       type: "POST",
       data: getParams($("textarea#string_lists").val()),
-      dataType: "plain",
       success: function(msg){
-        $("#output textarea")[0].value = msg;
+        $("#output textarea").val(msg);
         $("#output").show();
       }
    });
@@ -96,9 +110,8 @@ function ajaxData(addr) {
     $.ajax({
       url: "/" + addr + ".txt",
       type: "GET",
-      dataType: "plain",
       success: function(msg){
-        $("#input textarea")[0].value = msg;
+        $("#input textarea").val(msg);
         ajaxRefresh();
       }
    });

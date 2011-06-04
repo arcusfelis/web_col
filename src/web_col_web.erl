@@ -26,6 +26,7 @@ stop() ->
 
 loop(Req, DocRoot) ->
     [$/] ++ Path = Req:get(path),
+    
     try
         case Req:get(method) of
             Method when Method =:= 'GET'; Method =:= 'HEAD' ->
