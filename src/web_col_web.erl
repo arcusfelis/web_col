@@ -13,7 +13,7 @@
 
 start(Options) ->
     io:format("Define atoms: ~w", 
-        [{non_ignorable, blanked, shifted, shift_trimmed}]),
+        [{non_ignorable, blanked, shifted, shift_trimmed, lower, upper, off}]),
 
     {DocRoot, Options1} = get_option(docroot, Options),
     Loop = fun (Req) ->
@@ -84,11 +84,13 @@ col_key(Req) ->
 
 %% Extract params from a POST data list.
 col_params(PostList) ->
-    ux_col:get_options([
+    V = ux_col:get_options([
         {natural_sort, ux_par:atom("natural_sort", PostList)},
+        {case_sensitive, ux_par:atom("case_sensitive", PostList)},
         {strength, ux_par:integer("strength", PostList)},
-        {alternate, ux_par:atom("alternate", PostList)}
-    ]).
+        {alternate, ux_par:atom("alternate", PostList)},
+        {case_first, ux_par:atom("case_first", PostList)}
+    ]), io:format("~w~n", [V]), V.
 
 %% Internal API
 

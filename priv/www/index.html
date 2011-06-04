@@ -70,7 +70,9 @@ function getParams(str) {
     var obj = {
         alternate : $("input[name=alternate_rd]:checked").attr("id"),
         strength : $("input[name=strength_rd]:checked").val(),
+        case_first : $("input[name=case_first_rd]:checked").val(),
         natural_sort : $("input#natural_sort_chk").attr("checked"),
+        case_sensitive : $("input#case_sensitive_chk").attr("checked"),
         input : str
       };
     return obj;
@@ -109,8 +111,10 @@ $("#loader_block").buttonset();
 
 
 $("#natural_sort_chk").button();
+$("#case_sensitive_chk").button();
 $("#alternate_radioset").buttonset();
 $("#strength_radioset").buttonset();
+$("#case_first_radioset").buttonset();
 $("#refresh_btn").button({
     icons: {
         primary: "ui-icon-refresh"
@@ -268,7 +272,19 @@ $("#key_btn").button({
     <span class="u">
         <input type="checkbox" name="natural_sort_chk" id="natural_sort_chk" />
         <label for="natural_sort_chk" 
-            title="Natural sort for numbers (i.e. 2<10)">Natural</label>
+            title="Natural sort for numbers (i.e. 2&lt;10)">Natural</label>
+    </span>
+    <span class="u">
+        <input type="checkbox" name="case_sensitive_chk" id="case_sensitive_chk" />
+        <label for="case_sensitive_chk" 
+            title="Case sensitive: n&lt;N">Case</label>
+    </span>
+    <span id="case_first_radioset" class="u">
+        <input type="radio" id="lower" name="case_first_rd" value="lower" 
+            checked="checked" />
+        <label for="lower" title="Sort lower before upper.">Lower</label>
+        <input type="radio" id="upper" name="case_first_rd" value="upper" />
+        <label for="upper" title="Sort upper before lower.">Upper</label>
     </span>
     <button id="select_css_btn" title="Press to changhe theme">Default</button>
     <button id="info_btn" title="About program">Info</button>
