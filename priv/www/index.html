@@ -164,7 +164,7 @@ function setCss(id) {
     sel_css_btn.children().text(css_comments[id]);
 }
 
-if (cssId) {
+if (cssId && (cssId>0)) {
     setCss(parseInt(cssId));
 } else {
     cssId = 0;

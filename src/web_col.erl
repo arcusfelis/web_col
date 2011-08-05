@@ -21,6 +21,7 @@ ensure_started(App) ->
 start() ->
     web_col_deps:ensure(),
     ensure_started(crypto),
+    ensure_started(ux),
     application:start(web_col).
 
 

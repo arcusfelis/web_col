@@ -6,4 +6,4 @@
               {registered,[]},
               {mod,{web_col_app,[]}},
               {env,[]},
-              {applications,[kernel,stdlib,crypto]}]}.
+              {applications,[kernel,stdlib,crypto,ux]}]}.
